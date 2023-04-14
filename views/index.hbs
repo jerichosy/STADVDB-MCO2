@@ -24,7 +24,70 @@
 
 
     --}}
-    Hello World!
+    <div class="add-movie-section" method="post">
+        <h2>Add Movie</h2>
+        <form>
+            <input name="title" type="text" placeholder="Title" required>
+            <input name="year" type="number" placeholder="Year" required>
+            <select name="genre" required>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Crime">Crime</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Drama">Drama</option>
+                <option value="Family">Family</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Film-Noir">Film-Noir</option>
+                <option value="Horror">Horror</option>
+                <option value="Music">Music</option>
+                <option value="Musical">Musical</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Short">Short</option>
+                <option value="Thriller">Thriller</option>
+                <option value="War">War</option>
+                <option value="Western">Western</option>
+            </select>
+            <input name="director" type="text" placeholder="Director" required>
+            <input name="actor" type="text" placeholder="Actor" required>
+            <input type="submit">
+        </form>
+    </div>
+
+<div class="movies-list-section">
+    <h2>Browse Movies</h2>
+
+    <form method="get">
+        <input type="number" id="year-filter-from" name="year-from" placeholder="From">
+        <input type="number" id="year-filter-to" name="year-to" placeholder="To" >
+        <input type="submit">
+    </form>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Genre</th>
+            <th>Director</th>
+            <th>Actor</th>
+        </tr>
+
+        {{#each movies}}
+        <tr>
+            <td>{{this.title}}</td>
+            <td>{{this.year}}</td>
+            <td>{{this.genre}}</td>
+            <td>{{this.director}}</td>
+            <td>{{this.actor}}</td>
+            <td><button id="edit_{{this.id}}">Edit</button></td>
+            <td><button id="delete_{{this.id}}">Delete</button></td>
+        </tr>
+        {{/each}}
+    </table>
+</div>
 </body>
 
 </html>
