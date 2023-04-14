@@ -2,9 +2,13 @@ const mysql = require('mysql2');
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node1 = mysql.createPool({
+    // host: 'ccscloud3.dlsu.edu.ph',
+    // port: 39003,
+    // user: 'node_01',
     host: 'localhost',
+    port: 3310,
     user: 'root',
-    password: 'admin123',
+    password: '12345',
     database: 'movies',
     waitForConnections: true,
     connectionLimit: 10,
@@ -15,9 +19,10 @@ const node1 = mysql.createPool({
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node2 = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'admin123',
+    host: 'ccscloud3.dlsu.edu.ph',
+    port: 39004,
+    user: 'node_02',
+    password: '12345',
     database: 'movies',
     waitForConnections: true,
     connectionLimit: 10,
@@ -28,9 +33,10 @@ const node2 = mysql.createPool({
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node3 = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'admin123',
+    host: 'ccscloud3.dlsu.edu.ph',
+    port: 39005,
+    user: 'node_03',
+    password: '12345',
     database: 'movies',
     waitForConnections: true,
     connectionLimit: 10,
