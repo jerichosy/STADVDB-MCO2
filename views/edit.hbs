@@ -3,9 +3,9 @@
         <script type="text/javascript" src="/js/index.js"></script>
     </head>
     <body>
-    <div class="add-movie-section" method="post">
+    <div class="add-movie-section">
         <h2>Edit Movie</h2>        
-        <form>
+        <form action="/update" method="post">
             <input name="title" type="text" placeholder="Title" required value="{{title}}">
             <input name="year" type="number" placeholder="Year" required value="{{year}}">
             <select name="genre" title="Genre" required>
@@ -29,7 +29,6 @@
                 <option value="Thriller" {{#ifEqual genre "Thriller"}} selected{{/ifEqual}}>Thriller</option>
                 <option value="War" {{#ifEqual genre "War"}} selected{{/ifEqual}}>War</option>
                 <option value="Western" {{#ifEqual genre "Western"}} selected{{/ifEqual}}>Western</option>
-                
             </select>
             <input name="director" type="text" placeholder="Director" value="{{director}}" required>
             <input name="actor" type="text" placeholder="Actor" value="{{actor}}" required>
