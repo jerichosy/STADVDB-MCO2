@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <script type="text/javascript" src="/js/index.js"></script>
+    </head>
+    <body>
+    <div class="add-movie-section" method="post">
+        <h2>Edit Movie</h2>        
+        <form>
+            <input name="title" type="text" placeholder="Title" required value="{{title}}">
+            <input name="year" type="number" placeholder="Year" required value="{{year}}">
+            <select name="genre" title="Genre" required>
+                <option value="Action" {{#ifEqual genre "Action"}} selected{{/ifEqual}}>Action</option>
+                <option value="Adventure" {{#ifEqual genre "Adventure"}} selected{{/ifEqual}}>Adventure</option>
+                <option value="Animation" {{#ifEqual genre "Animation"}} selected{{/ifEqual}}>Animation</option>
+                <option value="Comedy" {{#ifEqual genre "Comedy"}} selected{{/ifEqual}}>Comedy</option>
+                <option value="Crime" {{#ifEqual genre "Crime"}} selected{{/ifEqual}}>Crime</option>
+                <option value="Documentary" {{#ifEqual genre "Documentary"}} selected{{/ifEqual}}>Documentary</option>
+                <option value="Drama" {{#ifEqual genre "Drama"}} selected{{/ifEqual}}>Drama</option>
+                <option value="Family" {{#ifEqual genre "Family"}} selected{{/ifEqual}}>Family</option>
+                <option value="Fantasy" {{#ifEqual genre "Fantasy"}} selected{{/ifEqual}}>Fantasy</option>
+                <option value="Film-Noir" {{#ifEqual genre "Film-Noir"}} selected{{/ifEqual}}>Film-Noir</option>
+                <option value="Horror" {{#ifEqual genre "Horror"}} selected{{/ifEqual}}>Horror</option>
+                <option value="Music" {{#ifEqual genre "Music"}} selected{{/ifEqual}}>Music</option>
+                <option value="Musical" {{#ifEqual genre "Musical"}} selected{{/ifEqual}}>Musical</option>
+                <option value="Mystery" {{#ifEqual genre "Mystery"}} selected{{/ifEqual}}>Mystery</option>
+                <option value="Romance" {{#ifEqual genre "Romance"}} selected{{/ifEqual}}>Romance</option>
+                <option value="Sci-Fi" {{#ifEqual genre "Sci-Fi"}} selected{{/ifEqual}}>Sci-Fi</option>
+                <option value="Short" {{#ifEqual genre "Short"}} selected{{/ifEqual}}>Short</option>
+                <option value="Thriller" {{#ifEqual genre "Thriller"}} selected{{/ifEqual}}>Thriller</option>
+                <option value="War" {{#ifEqual genre "War"}} selected{{/ifEqual}}>War</option>
+                <option value="Western" {{#ifEqual genre "Western"}} selected{{/ifEqual}}>Western</option>
+                
+            </select>
+            <input name="director" type="text" placeholder="Director" value="{{director}}" required>
+            <input name="actor" type="text" placeholder="Actor" value="{{actor}}" required>
+            <input type="submit">
+        </form>
+        </div>
+    </body>
+</html>

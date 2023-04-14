@@ -9,8 +9,8 @@
     {{!--
     <link rel="stylesheet" type="text/css" href="/css/index.css"> --}}
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript"></script>
-    {{!--
-    <script type="text/javascript" src="/js/index.js"></script> --}}
+
+    <script type="text/javascript" src="/js/index.js"></script>
 
 </head>
 
@@ -29,7 +29,7 @@
         <form>
             <input name="title" type="text" placeholder="Title" required>
             <input name="year" type="number" placeholder="Year" required>
-            <select name="genre" required>
+            <select name="genre" title="Genre" required>
                 <option value="Action">Action</option>
                 <option value="Adventure">Adventure</option>
                 <option value="Animation">Animation</option>
@@ -54,10 +54,10 @@
             <input name="director" type="text" placeholder="Director" required>
             <input name="actor" type="text" placeholder="Actor" required>
             <input type="submit">
-        </form>
+    </form>
     </div>
 
-<div class="movies-list-section">
+<div class="movies-li st-section">
     <h2>Browse Movies</h2>
 
     <form method="get">
@@ -82,8 +82,12 @@
             <td>{{this.genre}}</td>
             <td>{{this.director}}</td>
             <td>{{this.actor}}</td>
-            <td><button id="edit_{{this.id}}">Edit</button></td>
-            <td><button id="delete_{{this.id}}">Delete</button></td>
+            <td>
+                <a href="/editMovie?id={{this.id}}"><button>Edit</button></a>
+            </td>
+            <td>
+                <a href="/deleteMovie?id={{this.id}}"><button>Delete</button></a>
+            </td>
         </tr>
         {{/each}}
     </table>

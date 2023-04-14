@@ -1,40 +1,23 @@
 const node1 = require('../models/db');
 
 const controller = {
-    getIndex: function (req, res) {
+    getIndex: async function (req, res) {
 
-        //find SELECT * FROM movies;
-        //store result in movies
-
-        movies = [
-            {
-            id: 1,
-            title: "Everything Everywhere All At Once",
-            year: 2022,
-            genre: "Sci-fi",
-            director: "Daniel Kwan",
-            actor: "Michelle Yeoh"
-            },
-            {
-                id: 2,
-                title: "The Super Mario Bros. Movie",
-                year: 2023,
-                genre: "Adventure",
-                director: "Aaron Horvath",
-                actor: "Chris Pratt"
-            },
-            {
-                id: 3,
-                title: "SP02 Ricardo Dalisay",
-                year: 2023,
-                genre: "Action",
-                director: "Matthew Sy",
-                actor: "Andres Dalisay"
-            },
-
-            
-    ]
+        const [movies, fields] = await node1.promise().query(`SELECT * FROM movies LIMIT 50`);
+        
         res.render('index', {movies})
+    },
+
+    getEditMovie: async function(req, res){
+        const query1 = `SELECT * FROM movies where id = ` + req.query.id;
+        console.log(query1);
+        const [movie, fields] = await node1.promise().query(query1);
+
+        res.render('edit', movie[0]) 
+    },
+
+    getDeleteMovie: async function(req, res){
+
     },
 
     testQuery: async function (req, res) {
