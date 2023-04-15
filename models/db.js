@@ -1,14 +1,8 @@
 const {node1, node2, node3, node_utils} = require('./nodes.js'); 
 const transaction_utils = require('./transaction.js');
 const db_queries = {
-    // select_query
     selectQuery: async function (addtlQuery, from, to) {
-        //if node 2 and node 3 are alive, query there
-            //make transaction
-        //else if query in node 1
-            //make transaction
-        //else throw error. no nodes available
-
+        
         console.log(from)
         console.log(to)
 
@@ -70,27 +64,7 @@ const db_queries = {
                 }
             }
         }
-
-        // if(await node_utils.pingNode(2) && await node_utils.pingNode(3)) {
-        //     const [movies2, fields2] = await node2
-        //         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`); //1 2 3 4 5
-
-        //     const [movies3, fields3] = await node3
-        //         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`); //51 52 53 54 55
-            
-        //     return movies2.concat(movies3)
-        // }
-        // else if (await node_utils.pingNode(1)) {
-        //     const [movies, fields] = await node1
-        //         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`); //1 2 3 4 5
-
-        //     return movies
-        // }
-        // else {
-        //     console.log(`No nodes available. Please try again later.`);
-        // }
     },
-    // insert_query
 
     insertQuery: async function(query, year, nodenum) {
                
@@ -108,68 +82,9 @@ const db_queries = {
                 console.log("No nodes available. Please try again later.")
             }
         }
-        /*
-        //If Node 1 is alive
-            //make transaction
-            //log to what node #
-        //else if year < 1980
-            //make transaction to Node 2
-            //log to node 1
-        //else if year > 1980
-            // make transaction to Node 3
-            //log to node 1
-        //else throw error. no nodes available
-
-        // if(await node_utils.pingNode(nodenum)) {
-        //     await transaction_utils.do_transaction(nodenum, query)
-        //     //await node1.query(query);
-        //     if(year < 1980){
-        //         var query = 'INSERT into movies'
-        //         do_transaction
-        //         //log to node 2
-        //         //sync?
-        //         // do_transaction(1, query)
-        //         // do_transaction(2, query)
-        //     }
-        //     else{
-        //         //log to node 3
-        //         //sync?
-        //         // do_transaction(1, query)
-        //         // do_transaction(3, query)
-        //     }
-
-        // }
-        // else if (year < 1980) {
-        //     if(await node_utils.pingNode(2)){
-        //         await node2.query(query);
-        //         // do_transaction(2, query)
-        //         // now, how to insert it to node1 if it was down?
-        //         //log to main
-        //         //sync
-        //     }
-        //     else{
-                
-        //     }
-        // }
-        // else if (year >= 1980) {
-        //     if(await node_utils.pingNode(3)){
-        //         await node3.query(query);
-        //         // do_transaction(2, query)
-        //         // now, how to insert it to node1 if it was down?
-        //         //log to main
-        //         //sync
-        //     }
-        //     else{
-                
-        //     }
-        // }
-        // else {
-        //     console.log(`No nodes available. Please try again later.`);
-        // }
-        */
+        
     },
 
-    // update_query
     updateQuery: async function(query, oldyear, newyear) {
         //if node 1 is alive
             // if new year > 1980 && old year < 1980
@@ -240,19 +155,8 @@ const db_queries = {
 
     },
 
-    // delete_query
     deleteQuery: async function(query, year, nodenum) {
-        //If Node 1 is alive
-            //make transaction
-            //log to what node
-        //else if year < 1980
-            //make transaction to Node 2
-            //log to node 1
-        //else if year > 1980
-            // make transaction to Node 3
-            //log to node 1
-        //else throw error. no nodes available
-
+        
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             await transaction_utils.do_transaction(nodenum, query)
         }
@@ -268,43 +172,6 @@ const db_queries = {
             }
         }
 
-
-
-        // if(await node_utils.pingNode(1)) {
-        //     await node1.query(query);
-        //     if(year < 1980){
-        //         //log to node 2
-        //         //sync?
-        //     }
-        //     else{
-        //         //log to node 3
-        //         //sync?
-        //     }
-
-        // }
-        // else if (year < 1980) {
-        //     if(await node_utils.pingNode(2)){
-        //         await node2.query(query);
-        //         //log to main
-        //         //sync
-        //     }
-        //     else{
-
-        //     }
-        // }
-        // else if (year >= 1980) {
-        //     if(await node_utils.pingNode(3)){
-        //         await node3.query(query);
-        //         //log to main
-        //         //sync
-        //     }
-        //     else{
-                
-        //     }
-        // }
-        // else {
-        //     console.log(`No nodes available. Please try again later.`);
-        // }
     },
 }
 
