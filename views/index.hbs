@@ -68,6 +68,7 @@
 
     <table>
         <tr>
+            <th>#</th>
             <th>Title</th>
             <th>Year</th>
             <th>Genre</th>
@@ -77,6 +78,7 @@
 
         {{#each movies}}
         <tr>
+            <td>{{@index}}</td>
             <td>{{this.title}}</td>
             <td>{{this.year}}</td>
             <td>{{this.genre}}</td>
