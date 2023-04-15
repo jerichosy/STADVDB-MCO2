@@ -1,4 +1,5 @@
 const {node1, node2, node3, node_utils} = require('./nodes.js'); 
+const transaction_utils = require('./transaction.js');
 const db_queries = {
     // select_query
     selectQuery: async function (addtlQuery, from, to) {
@@ -14,13 +15,13 @@ const db_queries = {
         if(from < 1980 && to < 1980){
             console.log("Getting from Node 2");
             if(await node_utils.pingNode(2)){
-                const [movies, fields] = await node2.promise()
+                const [movies, fields] = await node2
                 .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`);
                 return movies
             }
             else{
                 if(await node_utils.pingNode(1)){
-                    const [movies, fields] = await node1.promise()
+                    const [movies, fields] = await node1
                     .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`);
                     return movies
                 }
@@ -32,13 +33,13 @@ const db_queries = {
         else if (from >= 1980 && to >= 1980) {
             console.log("Getting from Node 3");
             if (await node_utils.pingNode(3)) {
-                const [movies, fields] = await node3.promise()
+                const [movies, fields] = await node3
                 .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`);
                 return movies
             }
             else {
                 if (await node_utils.pingNode(1)) {
-                    const [movies, fields] = await node1.promise()
+                    const [movies, fields] = await node1
                         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`); 
                         return movies
                 }
@@ -50,16 +51,16 @@ const db_queries = {
         else {
             console.log("Getting from Node 1")
             if (await node_utils.pingNode(1)) {
-                const [movies, fields] = await node1.promise()
+                const [movies, fields] = await node1
                     .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`); 
                     return movies
             }
             else {
                 if(await node_utils.pingNode(2) && await node_utils.pingNode(3)) {
-                    const [movies2, fields2] = await node2.promise()
+                    const [movies2, fields2] = await node2
                         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`);
         
-                    const [movies3, fields3] = await node3.promise()
+                    const [movies3, fields3] = await node3
                         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`); 
                     
                     return movies2.concat(movies3)
@@ -71,16 +72,16 @@ const db_queries = {
         }
 
         // if(await node_utils.pingNode(2) && await node_utils.pingNode(3)) {
-        //     const [movies2, fields2] = await node2.promise()
+        //     const [movies2, fields2] = await node2
         //         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`); //1 2 3 4 5
 
-        //     const [movies3, fields3] = await node3.promise()
+        //     const [movies3, fields3] = await node3
         //         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`); //51 52 53 54 55
             
         //     return movies2.concat(movies3)
         // }
         // else if (await node_utils.pingNode(1)) {
-        //     const [movies, fields] = await node1.promise()
+        //     const [movies, fields] = await node1
         //         .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`); //1 2 3 4 5
 
         //     return movies
@@ -91,7 +92,23 @@ const db_queries = {
     },
     // insert_query
 
-    insertQuery: async function(query, year) {
+    insertQuery: async function(query, year, nodenum) {
+               
+        if (nodenum == 1 && await node_utils.pingNode(1)) {
+            await transaction_utils.do_transaction(nodenum, query)
+        }
+        else {
+            if (year < 1980 && await node_utils.pingNode(2)){
+                await transaction_utils.do_transaction(2, query)
+            }
+            else if (year >= 1980 && await node_utils.pingNode(3)) {
+                await transaction_utils.do_transaction(3, query)
+            }
+            else {
+                console.log("No nodes available. Please try again later.")
+            }
+        }
+        /*
         //If Node 1 is alive
             //make transaction
             //log to what node #
@@ -103,41 +120,53 @@ const db_queries = {
             //log to node 1
         //else throw error. no nodes available
 
-        if(await node_utils.pingNode(1)) {
-            await node1.promise().query(query);
-            if(year < 1980){
-                //log to node 2
-                //sync?
-            }
-            else{
-                //log to node 3
-                //sync?
-            }
+        // if(await node_utils.pingNode(nodenum)) {
+        //     await transaction_utils.do_transaction(nodenum, query)
+        //     //await node1.query(query);
+        //     if(year < 1980){
+        //         var query = 'INSERT into movies'
+        //         do_transaction
+        //         //log to node 2
+        //         //sync?
+        //         // do_transaction(1, query)
+        //         // do_transaction(2, query)
+        //     }
+        //     else{
+        //         //log to node 3
+        //         //sync?
+        //         // do_transaction(1, query)
+        //         // do_transaction(3, query)
+        //     }
 
-        }
-        else if (year < 1980) {
-            if(await node_utils.pingNode(2)){
-                await node2.promise().query(query);
-                //log to main
-                //sync
-            }
-            else{
-
-            }
-        }
-        else if (year >= 1980) {
-            if(await node_utils.pingNode(3)){
-                await node3.promise().query(query);
-                //log to main
-                //sync
-            }
-            else{
+        // }
+        // else if (year < 1980) {
+        //     if(await node_utils.pingNode(2)){
+        //         await node2.query(query);
+        //         // do_transaction(2, query)
+        //         // now, how to insert it to node1 if it was down?
+        //         //log to main
+        //         //sync
+        //     }
+        //     else{
                 
-            }
-        }
-        else {
-            console.log(`No nodes available. Please try again later.`);
-        }
+        //     }
+        // }
+        // else if (year >= 1980) {
+        //     if(await node_utils.pingNode(3)){
+        //         await node3.query(query);
+        //         // do_transaction(2, query)
+        //         // now, how to insert it to node1 if it was down?
+        //         //log to main
+        //         //sync
+        //     }
+        //     else{
+                
+        //     }
+        // }
+        // else {
+        //     console.log(`No nodes available. Please try again later.`);
+        // }
+        */
     },
 
     // update_query
@@ -167,12 +196,12 @@ const db_queries = {
         // NEED LOG
         if(await node_utils.pingNode(1)) {
             if(oldyear == newyear){
-                await node1.promise().query(query);
+                await node1.query(query);
                 if(oldyear < 1980){
-                    await node2.promise().query(query);
+                    await node2.query(query);
                 }
                 else{
-                    await node3.promise().query(query);
+                    await node3.query(query);
                 }
 
                 //OR
@@ -187,7 +216,7 @@ const db_queries = {
         }
         else if (year < 1980) {
             if(await node_utils.pingNode(2)){
-                await node2.promise().query(query);
+                await node2.query(query);
                 //log to main
                 //sync
             }
@@ -197,7 +226,7 @@ const db_queries = {
         }
         else if (year >= 1980) {
             if(await node_utils.pingNode(3)){
-                await node3.promise().query(query);
+                await node3.query(query);
                 //log to main
                 //sync
             }
@@ -225,7 +254,7 @@ const db_queries = {
         //else throw error. no nodes available
 
         if(await node_utils.pingNode(1)) {
-            await node1.promise().query(query);
+            await node1.query(query);
             if(year < 1980){
                 //log to node 2
                 //sync?
@@ -238,7 +267,7 @@ const db_queries = {
         }
         else if (year < 1980) {
             if(await node_utils.pingNode(2)){
-                await node2.promise().query(query);
+                await node2.query(query);
                 //log to main
                 //sync
             }
@@ -248,7 +277,7 @@ const db_queries = {
         }
         else if (year >= 1980) {
             if(await node_utils.pingNode(3)){
-                await node3.promise().query(query);
+                await node3.query(query);
                 //log to main
                 //sync
             }
