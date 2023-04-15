@@ -4,9 +4,9 @@ const dotenv = require(`dotenv`).config();
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node1 = mysql.createPool({
-    // host: 'localhost',
-    // port: 3310,
-    // user: 'root',
+    // host: process.env.DB_REMOTE_HOST,
+    // port: process.env.DB_REMOTE_PORT_01,
+    
     host: process.env.DB_HOST_01,
     port: process.env.DB_PORT,
     user: process.env.DB_USER_01,
@@ -21,9 +21,9 @@ const node1 = mysql.createPool({
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node2 = mysql.createPool({
-    // host: 'localhost',
-    // port: 3306,
-    // user: 'root',
+    // host: process.env.DB_REMOTE_HOST,
+    // port: process.env.DB_REMOTE_PORT_02,
+
     host: process.env.DB_HOST_02,
     port: process.env.DB_PORT,
     user: process.env.DB_USER_02,
@@ -38,6 +38,9 @@ const node2 = mysql.createPool({
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node3 = mysql.createPool({
+    // host: process.env.DB_REMOTE_HOST,
+    // port: process.env.DB_REMOTE_PORT_03,
+
     host: process.env.DB_HOST_03,
     port: process.env.DB_PORT,
     user: process.env.DB_USER_03,
@@ -54,6 +57,7 @@ const nodes = [node1, node2, node3];
 
 const node_utils = {
     pingNode: async function (n) {
+        
         try {
             const [rows, fields] = await nodes[n - 1].promise().query(`SELECT 1`);  // TODO: Is promise() necessary?
             return true;
@@ -67,5 +71,7 @@ const node_utils = {
 
 module.exports = {
     node1: node1,
+    node2: node2,
+    node3: node3,
     node_utils
 }
