@@ -27,6 +27,6 @@ app.use(`/`, routes);
 //db.connect();
 
 app.listen(port, hostname, function () {
-    console.log(`Server is running at:`);
+    console.log(`Server ${process.env.NODE_NO} is running at:`);
     console.log(`http://` + hostname + `:` + port);
 });
