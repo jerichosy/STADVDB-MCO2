@@ -1,14 +1,16 @@
 const mysql = require('mysql2');
+const dotenv = require(`dotenv`).config();
+
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node1 = mysql.createPool({
-     host: '127.16.3.103',
-     port: 3306,
-     user: 'node_01',
-   // host: 'localhost',
-   // port: 3310,
-   // user: 'root',
-    password: '12345',
+    // host: 'localhost',
+    // port: 3310,
+    // user: 'root',
+    host: process.env.DB_HOST_01,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER_01,
+    password: process.env.DB_PASS,
     database: 'movies',
     waitForConnections: true,
     connectionLimit: 10,
@@ -19,10 +21,13 @@ const node1 = mysql.createPool({
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node2 = mysql.createPool({
-    host: '127.16.3.104',
-    port: 3306,
-    user: 'node_02',
-    password: '12345',
+    // host: 'localhost',
+    // port: 3306,
+    // user: 'root',
+    host: process.env.DB_HOST_02,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER_02,
+    password: process.env.DB_PASS,
     database: 'movies',
     waitForConnections: true,
     connectionLimit: 10,
@@ -33,10 +38,10 @@ const node2 = mysql.createPool({
 
 // Create the connection pool. The pool-specific settings are the defaults
 const node3 = mysql.createPool({
-    host: '127.16.3.105',
-    port: 3306,
-    user: 'node_03',
-    password: '12345',
+    host: process.env.DB_HOST_03,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER_03,
+    password: process.env.DB_PASS,
     database: 'movies',
     waitForConnections: true,
     connectionLimit: 10,

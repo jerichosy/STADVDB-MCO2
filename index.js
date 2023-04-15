@@ -18,10 +18,8 @@ hbs.registerHelper("ifEqual", function(a, b, options) {
 });
 
 dotenv.config();
-// port = process.env.PORT;
 hostname = process.env.HOSTNAME;
-//hostname = "172.16.3.103"
-port = 80
+port = process.env.PORT;
 
 app.use(express.static(`public`));
 app.use(`/`, routes);
