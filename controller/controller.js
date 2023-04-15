@@ -1,5 +1,6 @@
 const {node1, node2, node3, node_utils} = require('../models/nodes');
 const db_queries = require('../models/db');
+const dotenv = require(`dotenv`).config();
 
 const controller = {
     // getIndex: async function (req, res) {
@@ -50,9 +51,12 @@ const controller = {
     },
     
     postUpdateMovie: async function (req, res) {
-        var id = req.get('referer');
-        id = id.replace("http://localhost:3000" + "/editMovie?id=", ""); // change to current node's URI
-
+        // var id = req.get('referer');
+        // console.log(id);
+        // id = id.replace("http://" + process.env.THIS_HOST + ":" + process.env.THIS_PORT +"/editMovie?id=", ""); // change to current node's URI
+        // console.log(id);
+        let id = req.body.id;
+        console.log(id);
         if(req.body.newyear === ""){
             year = req.body.oldyear
         }
@@ -127,7 +131,7 @@ const controller = {
 
     pingNode: async function (req, res) {
         const id = req.params.id;
-        const result = await nodes.node_utils.pingNode(id);
+        const result = await node_utils.pingNode(id);
         res.send(result);
     }
 }
