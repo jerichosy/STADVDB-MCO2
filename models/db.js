@@ -16,13 +16,13 @@ const db_queries = {
             console.log("Getting from Node 2");
             if(await node_utils.pingNode(2)){
                 const [movies, fields] = await node2
-                .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`);
+                .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
                 return movies
             }
             else{
                 if(await node_utils.pingNode(1)){
                     const [movies, fields] = await node1
-                    .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`);
+                    .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
                     return movies
                 }
                 else{
@@ -52,7 +52,7 @@ const db_queries = {
             console.log("Getting from Node 1")
             if (await node_utils.pingNode(1)) {
                 const [movies, fields] = await node1
-                    .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`); 
+                    .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`); 
                     return movies
             }
             else {
@@ -241,7 +241,7 @@ const db_queries = {
     },
 
     // delete_query
-    deleteQuery: async function(query, year) {
+    deleteQuery: async function(query, year, nodenum) {
         //If Node 1 is alive
             //make transaction
             //log to what node
@@ -253,41 +253,58 @@ const db_queries = {
             //log to node 1
         //else throw error. no nodes available
 
-        if(await node_utils.pingNode(1)) {
-            await node1.query(query);
-            if(year < 1980){
-                //log to node 2
-                //sync?
-            }
-            else{
-                //log to node 3
-                //sync?
-            }
-
-        }
-        else if (year < 1980) {
-            if(await node_utils.pingNode(2)){
-                await node2.query(query);
-                //log to main
-                //sync
-            }
-            else{
-
-            }
-        }
-        else if (year >= 1980) {
-            if(await node_utils.pingNode(3)){
-                await node3.query(query);
-                //log to main
-                //sync
-            }
-            else{
-                
-            }
+        if (nodenum == 1 && await node_utils.pingNode(1)) {
+            await transaction_utils.do_transaction(nodenum, query)
         }
         else {
-            console.log(`No nodes available. Please try again later.`);
+            if (year < 1980 && await node_utils.pingNode(2)){
+                await transaction_utils.do_transaction(2, query)
+            }
+            else if (year >= 1980 && await node_utils.pingNode(3)) {
+                await transaction_utils.do_transaction(3, query)
+            }
+            else {
+                console.log("No nodes available. Please try again later.")
+            }
         }
+
+
+
+        // if(await node_utils.pingNode(1)) {
+        //     await node1.query(query);
+        //     if(year < 1980){
+        //         //log to node 2
+        //         //sync?
+        //     }
+        //     else{
+        //         //log to node 3
+        //         //sync?
+        //     }
+
+        // }
+        // else if (year < 1980) {
+        //     if(await node_utils.pingNode(2)){
+        //         await node2.query(query);
+        //         //log to main
+        //         //sync
+        //     }
+        //     else{
+
+        //     }
+        // }
+        // else if (year >= 1980) {
+        //     if(await node_utils.pingNode(3)){
+        //         await node3.query(query);
+        //         //log to main
+        //         //sync
+        //     }
+        //     else{
+                
+        //     }
+        // }
+        // else {
+        //     console.log(`No nodes available. Please try again later.`);
+        // }
     },
 }
 

@@ -97,17 +97,10 @@ const controller = {
 
     getDeleteMovie: async function(req, res){
         const query = `DELETE FROM movies WHERE id = ` + req.query.id;
-        const [movie, fields] = await node1.query(query);
-
-        res.redirect('index');
+        
+        db_queries.deleteQuery(query, req.body.year, process.env.NODE_NO)
+        res.redirect('/');
     },
-
-    // getDeleteMovie: async function(req, res){
-    //     const query = `DELETE FROM movies WHERE id = ` + req.query.id;
-    //     
-    //     db_queries.deleteQuery(query, req.body.year)
-    //     res.redirect('index');
-    // },
 
     testQuery: async function (req, res) {
         const [rows, fields] = await node1.query(`SELECT * FROM movies`);
