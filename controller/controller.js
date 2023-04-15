@@ -2,10 +2,24 @@ const {node1, node_utils} = require('../models/nodes');
 
 const controller = {
     getIndex: async function (req, res) {
-
-        const [movies, fields] = await node1.promise().query(`SELECT * FROM movies LIMIT 50`);
+        const [movies, fields] = await node1.promise().query(`SELECT * FROM movies LIMIT 100`);
         
         res.render('index', {movies})
+    },
+
+    getFiltered: async function (req, res) {
+        console.log(req.query);
+        let from = req.query.yearFrom;
+        let to = req.query.yearTo;
+
+        if (from == '')
+            from = -1;
+        if (to == '')
+            to = 9999;
+
+        const [movies, fields] = await node1.promise()
+            .query(`SELECT * FROM movies WHERE year >=` + from + ` AND year <=` + to + ` LIMIT 100`);
+        res.render('index', {movies});
     },
 
     getEditMovie: async function(req, res){
