@@ -18,7 +18,7 @@ hbs.registerHelper("ifEqual", function(a, b, options) {
 });
 
 dotenv.config();
-hostname = process.env.HOSTNAME;
+hostname = process.env.THIS_HOST;
 port = process.env.PORT;
 
 app.use(express.static(`public`));
