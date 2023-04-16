@@ -116,15 +116,26 @@ DROP TRIGGER update_movie;
 # TESTING
 
 INSERT INTO movies (title, `year`, genre, director, actor) VALUES ('Your Name', 2016, 'Romance', 'Makoto Shinkai', 'Mone Kamishiraishi'); 
+INSERT INTO movies (title, `year`, genre, director, actor) VALUES ('Your Name', 2012, 'Romance', 'Makoto Shinkai', 'Mone Kamishiraishi'); 
 INSERT INTO movies (title, `year`, genre, director, actor) VALUES ('Your Name', 1979, 'Romance', 'Makoto Shinkai', 'Mone Kamishiraishi'); 
 
 SELECT * FROM movies WHERE title = 'Your Name';
+DELETE FROM movies WHERE id = 378627;
 
+SELECT * FROM movies WHERE year >= 2023;
+SELECT @@global.time_zone, @@session.time_zone;
 SELECT * FROM log_table_02;
 SELECT * FROM log_table_03;
 
-DELETE FROM movies WHERE id = 378619;
-DELETE FROM movies WHERE id = 378620;
+SELECT MAX(log_id) FROM log_table_03;
 
-DELETE FROM log_table_02 WHERE log_id = 1 OR log_id = 2;
-DELETE FROM log_table_03 WHERE log_id = 1 OR log_id = 2;
+SELECT * FROM log_table_03 ORDER BY action_time ASC;
+SELECT * FROM log_table_02 ORDER BY action_time ASC;
+SELECT * FROM movies  ORDER BY id DESC LIMIT 15;
+
+SELECT * FROM movies  ORDER BY id DESC LIMIT 15;
+DELETE FROM movies WHERE id = 378621;
+DELETE FROM movies WHERE id >= 378613;
+
+DELETE FROM log_table_02 WHERE log_id = 1 OR log_id = 3;
+DELETE FROM log_table_03 WHERE log_id = 1 OR log_id = 3;
