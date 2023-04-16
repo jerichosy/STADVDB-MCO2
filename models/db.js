@@ -84,7 +84,7 @@ const db_queries = {
                 console.log(`Getting from Node 1 because year range (${from} - ${to})`)
                 if (await node_utils.pingNode(1)) {
                     const [movies, fields] = await node1
-                        .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`); 
+                        .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY id DESC LIMIT 200`); 
                         return movies
                 }
                 else {
