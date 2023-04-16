@@ -135,7 +135,7 @@ const db_queries = {
         
     },
 
-    updateQuery: async function(query, oldyear, newyear, nodenum, body) {
+    updateQueryold: async function(query, oldyear, newyear, nodenum, body) {
         //no changing of year
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             await transaction_utils.do_transaction(nodenum, query)
@@ -185,17 +185,66 @@ const db_queries = {
     updateQuery_delay: async function(query, oldyear, newyear, nodenum, body) {
         //no changing of year
         if (nodenum == 1 && await node_utils.pingNode(1)) {
-            await transaction_utils.do_transaction_delay(nodenum, query)
+            await transaction_utils.update_movie_transaction(nodenum, query)
         }
         else if(oldyear == newyear){    // if no change to year
+
             if(oldyear < 1980 && await node_utils.pingNode(2)){
-                await transaction_utils.do_transaction_delay(2, query)
+                await transaction_utils.update_movie_transaction(2, query)
             }
             else if(oldyear >= 1980 && await node_utils.pingNode(3)){
+                await transaction_utils.update_movie_transaction(3, query)
+            }
+            else if (await node_utils.pingNode(1)){
+                await transaction_utils.update_movie_transaction(1, query)
+            }
+            else{
+                console.log("No nodes available. Please try again later.")
+            }
+        }
+
+        //with year change but no node change, since no changes are handled in controller
+        else if (oldyear < 1980 && newyear < 1980){
+            // keep in node 2
+            if (await node_utils.pingNode(2)) {
+                await transaction_utils.do_transaction_delay(2, query)
+            }
+            else if (await node_utils.pingNode(1)){
+                await transaction_utils.do_transaction_delay(1, query)
+            }
+            else{
+                console.log("No nodes available. Please try again later.")
+            }
+        }
+        else if (oldyear >= 1980 && newyear >= 1980){
+            // keep in node 3
+            if (await node_utils.pingNode(3)) {
                 await transaction_utils.do_transaction_delay(3, query)
             }
             else if (await node_utils.pingNode(1)){
                 await transaction_utils.do_transaction_delay(1, query)
+            }
+            else{
+                console.log("No nodes available. Please try again later.")
+            }
+        }
+    },
+
+    updateQuery: async function(data, nodenum) {
+        //no changing of year
+        if (nodenum == 1 && await node_utils.pingNode(1)) {
+            await transaction_utils.update_movie_transaction(nodenum, data)
+        }
+        else if(data.oldyear == data.newyear){    // if no change to year
+
+            if(data.oldyear < 1980 && await node_utils.pingNode(2)){
+                await transaction_utils.update_movie_transaction(2, data)
+            }
+            else if(data.oldyear >= 1980 && await node_utils.pingNode(3)){
+                await transaction_utils.update_movie_transaction(3, data)
+            }
+            else if (await node_utils.pingNode(1)){
+                await transaction_utils.update_movie_transaction(1, data)
             }
             else{
                 console.log("No nodes available. Please try again later.")

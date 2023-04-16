@@ -32,6 +32,16 @@ const controller = {
 
     postUpdateMovie: async function (req, res) {
         console.log("-------------------------UPDATE----------------")
+        let data = {
+            id: req.body.id,
+            title: req.body.title,
+            newyear: req.body.newyear,
+            oldyear: req.body.oldyear,
+            genre: req.body.genre,
+            director: req.body.director,
+            actor: req.body.actor
+        }
+
         let id = req.body.id;
         console.log(id)
 
@@ -42,11 +52,11 @@ const controller = {
             year = req.body.newyear
         }
         //no node change update
-        if((req.body.oldyear < 1980 && req.body.newyear < 1980) || (req.body.oldyear >= 1980 && req.body.newyear >= 1980)){
-            const query = `UPDATE movies SET title = '` + req.body.title + `', year = ` + year + `, genre = '` + 
-                        req.body.genre + `', director = '` + req.body.director + `', actor = '` + req.body.actor + `' WHERE id = ` + id;
+        if((data.oldyear < 1980 && data.newyear < 1980) || (data.oldyear >= 1980 && data.newyear >= 1980)){
+            const query = `UPDATE movies SET title = '` + data.title + `', year = ` + year + `, genre = '` + 
+                        data.genre + `', director = '` + data.director + `', actor = '` + data.actor + `' WHERE id = ` + id;
 
-            await db_queries.updateQuery_delay(query, req.body.oldyear, year, process.env.NODE_NO, req.body)
+            await db_queries.updateQuery(data, process.env.NODE_NO)
             await sync.sync_central();
             await sync.sync_fragment(node2, 2);
             await sync.sync_fragment(node3, 3);
