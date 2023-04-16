@@ -27,19 +27,17 @@ port = process.env.PORT;
 app.use(express.static(`public`));
 app.use(`/`, routes);
 
-//db.connect();
-
-// switch (process.env.NODE_NO) {
-//     case `1`:
-//         replicator(sync.sync_central);
-//         break;
-//     case `2`:
-//         replicator(sync.sync_fragment, node2, 2);
-//         break;
-//     case `3`:
-//         replicator(sync.sync_fragment, node3, 3);
-//         break;
-// }
+switch (process.env.NODE_NO) {
+    case `1`:
+        replicator(sync.sync_central);
+        break;
+    case `2`:
+        replicator(sync.sync_fragment, node2, 2);
+        break;
+    case `3`:
+        replicator(sync.sync_fragment, node3, 3);
+        break;
+}
 
 app.listen(port, hostname, function () {
     console.log(`Server ${process.env.NODE_NO} is running at:`);

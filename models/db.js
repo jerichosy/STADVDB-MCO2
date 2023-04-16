@@ -81,7 +81,7 @@ const db_queries = {
             }
             // Incase of a range that spans both nodes, we query Node 1 (if it's alive) or both Node 2 and Node 3 and concatenate the results
             else {
-                console.log(`Getting from Node 1 because year range (${from}-${to})`)
+                console.log(`Getting from Node 1 because year range (${from} - ${to})`)
                 if (await node_utils.pingNode(1)) {
                     const [movies, fields] = await node1
                         .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`); 

@@ -6,14 +6,14 @@ const replicateDatabase = function replicateDatabase(syncer, arg1, arg2) {
             // console.log("Replication task completed");
 
             // Schedule the next replication task only when the previous task is complete
-            setTimeout(() => replicateDatabase(syncer, arg1, arg2), 5000);
+            setTimeout(() => replicateDatabase(syncer, arg1, arg2), 1000);
         })
         .catch((error) => {
             // Handle the error
             console.error("An error occurred during replication:", error);
 
             // Schedule the next replication task only when the previous task is complete
-            setTimeout(() => replicateDatabase(syncer, arg1, arg2), 5000);
+            setTimeout(() => replicateDatabase(syncer, arg1, arg2), 1000);
         });
 }
 

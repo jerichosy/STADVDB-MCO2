@@ -68,8 +68,7 @@ const sync_utils = {
                     
                 }
             }
-            else if(maxCentral < maxFrag){
-                // this.sync_central()
+            else if(maxCentral < maxFrag){                
                 console.log("Central needs to be synced");
             }
             
@@ -116,7 +115,6 @@ const sync_utils = {
                 node_02_log = await transaction_utils.do_transaction(2, node_02_records_query);
             }
             else if (maxCentral2 > maxFrag2){
-                // this.sync_fragment(node2, 2)
                 console.log("Node 2 needs to be synced");
             }
 
@@ -125,7 +123,6 @@ const sync_utils = {
                 node_03_log = await transaction_utils.do_transaction(3, node_03_records_query);
             }
             else if (maxCentral3 > maxFrag3){
-                // this.sync_fragment(node3, 3)
                 console.log("Node 3 needs to be synced");
             }
 

@@ -72,14 +72,9 @@ const controller = {
                 await sync.sync_central();
                 await sync.sync_fragment(node2, 2);
                 await sync.sync_fragment(node3, 3);
-                // ~sync_central
-                // insert to node 1, ~sync_frag(opp_frag_node)
-                    // if node 1 down, insert to opposite frag node, ~sync_central
+
                 if (await node_utils.pingNode(1)) {
                     await db_queries.insertQuery(queryIns, req.body.newyear, 1)
-                    await sync.sync_central();
-                    await sync.sync_fragment(node2, 2);
-                    await sync.sync_fragment(node3, 3);
                     console.log("SHOULD SYNC AFTER INSERT");
                 } 
                 else {
@@ -90,6 +85,9 @@ const controller = {
                         await db_queries.insertQuery(queryIns, req.body.newyear, 3)
                     }
                 }
+                await sync.sync_central();
+                await sync.sync_fragment(node2, 2);
+                await sync.sync_fragment(node3, 3);
             }
                
         }
@@ -127,20 +125,20 @@ const controller = {
             [lastSelfID, fields2] = await node2.query(queryForLastID);
         }
 
-        console.log("lastID: ");
-        console.log(lastID[0].id);
-        console.log("lastSelfID")
-        console.log(lastSelfID[0].id);
-
         if(lastID[0].id <= lastSelfID[0].id){
             await db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+            await sync.sync_central();
+            await sync.sync_fragment(node2, 2);
+            await sync.sync_fragment(node3, 3);
         }
         else if (lastID[0].id > lastSelfID[0].id){
             lastSelfID = lastID[0].id + 1
-            console.log(lastSelfID);
             query = `INSERT INTO movies (id, title, year, genre, director, actor) VALUES ('` + lastSelfID + `','` + req.body.title + `','` + req.body.year  + `','` +
                 req.body.genre + `', '` + req.body.director + `', '`  + req.body.actor + `')`;
-            await db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+            await db_queries.insertQuery(query, req.body.year, process.env.NODE_NO);
+            await sync.sync_central();
+            await sync.sync_fragment(node2, 2);
+            await sync.sync_fragment(node3, 3);
         }
 
         res.redirect('/');
@@ -150,6 +148,9 @@ const controller = {
         const query = `DELETE FROM movies WHERE id = ` + req.query.id;
         
         await db_queries.deleteQuery(query, req.body.year, process.env.NODE_NO)
+        await sync.sync_central();
+        await sync.sync_fragment(node2, 2);
+        await sync.sync_fragment(node3, 3);
         res.redirect('/');
     },
 
