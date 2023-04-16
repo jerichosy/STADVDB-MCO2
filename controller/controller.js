@@ -24,25 +24,9 @@ const controller = {
         res.render('index', {movies})
     },
 
-    getFiltered: async function (req, res) {
-        console.log(req.query);
-        let from = req.query.yearFrom;
-        let to = req.query.yearTo;
-
-        if (from == '')
-            from = -1;
-        if (to == '')
-            to = 9999;
-
-        const [movies, fields] = await node1
-            .query(`SELECT * FROM movies WHERE year >=` + from + ` AND year <=` + to + ` LIMIT 100`);
-        res.render('index', {movies});
-    },
-
     getEditMovie: async function(req, res){
         const query = `SELECT * FROM movies where id = ` + req.query.id;
-        const [movie, fields] = await node1.query(query);  //TODO: node 2 and node 3 
-
+        const movie = await db_queries.genericQuery(query, process.env.NODE_NO, req.query.year);
         res.render('edit', movie[0]) 
     },
 

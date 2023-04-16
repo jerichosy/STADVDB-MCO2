@@ -2,6 +2,32 @@ const {node1, node2, node3, node_utils} = require('./nodes.js');
 const transaction_utils = require('./transaction.js');
 
 const db_queries = {
+    genericQuery: async function (query, nodenum, year) {
+        let result;
+        if (nodenum == 1 && await node_utils.pingNode(1)) {
+            console.log(`Generic query to Node 1 because nodenum = ${nodenum}`)
+            result = await transaction_utils.do_transaction(nodenum, query)
+        }
+        else {
+            if (year < 1980 && await node_utils.pingNode(2)){
+                console.log(`Generic query to Node 2 because year = ${year}`)
+                result = await transaction_utils.do_transaction(2, query)
+            }
+            else if (year >= 1980 && await node_utils.pingNode(3)) {
+                console.log(`Generic query to Node 3 because year = ${year}`)
+                result = await transaction_utils.do_transaction(3, query)
+            }
+            else if (await node_utils.pingNode(1)){
+                console.log("Generic query to Node 1 because Node 2 or 3 is down")
+                result = await transaction_utils.do_transaction(1, query)
+            }
+            else {
+                console.log("No nodes available. Please try again later.")
+            }
+        }
+        return result
+    },
+
     // this is okay na
     selectQuery: async function (addtlQuery, from, to, nodenum) {
         // If we're node 1, prefer Node 1 if alive
@@ -157,7 +183,6 @@ const db_queries = {
     },
 
     deleteQuery: async function(query, year, nodenum) {
-        
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             console.log(`Deleting from Node 1 because nodenum = ${nodenum}`)
             await transaction_utils.do_transaction(nodenum, query)
