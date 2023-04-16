@@ -107,7 +107,11 @@ const controller = {
         if(await node_utils.pingNode(1)) {
             console.log("1st");
             [lastID, fields1] = await node1.query(queryForLastID);
-            if (process.env.NODE_NO == "2"){
+            
+            if (process.env.NODE_NO == "1") {
+                [lastSelfID, fields2] = await node1.query(queryForLastID);
+            }
+            else if (process.env.NODE_NO == "2"){
                 [lastSelfID, fields2] = await node2.query(queryForLastID);
             }
             else if (process.env.NODE_NO == "3") {
