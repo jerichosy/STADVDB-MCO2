@@ -3,6 +3,7 @@ const express = require(`express`);
 const hbs = require(`hbs`);
 const bodyParser = require(`body-parser`);
 const routes = require(`./routes/routes.js`);
+const replicator = require(`./models/replicator.js`);
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,6 +26,8 @@ app.use(express.static(`public`));
 app.use(`/`, routes);
 
 //db.connect();
+
+// replicator();
 
 app.listen(port, hostname, function () {
     console.log(`Server ${process.env.NODE_NO} is running at:`);

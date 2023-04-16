@@ -1,4 +1,5 @@
 const {node1, node2, node3, node_utils} = require('../models/nodes');
+const sync = require('../models/synchronizer')
 const db_queries = require('../models/db');
 const dotenv = require(`dotenv`).config();
 
@@ -99,11 +100,50 @@ const controller = {
 
     postAddMovie: async function (req, res) {
         // INSERT INTO movies (title, year, genre, director, actor) VALUES ('The Matrix', 1999, 'Sci-Fi', 'Lana Wachowski', 'Keanu Reeves');
-        console.log(req.body)
-        const query = `INSERT INTO movies (title, year, genre, director, actor) VALUES ('` + req.body.title + `','` + req.body.year  + `','` +
+        let query = `INSERT INTO movies (title, year, genre, director, actor) VALUES ('` + req.body.title + `','` + req.body.year  + `','` +
                         req.body.genre + `', '` + req.body.director + `', '`  + req.body.actor + `')`;
         
-        db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+        const queryForLastID = `SELECT MAX(id) AS id FROM movies`;
+        console.log(process.env.NODE_NO) 
+        let lastID, fields1, fields2;
+
+        if(await node_utils.pingNode(1)) {
+            console.log("1st");
+            [lastID, fields1] = await node1.query(queryForLastID);
+            if (process.env.NODE_NO == "2"){
+                [lastSelfID, fields2] = await node2.query(queryForLastID);
+            }
+            else if (process.env.NODE_NO == "3") {
+                [lastSelfID, fields2] = await node3.query(queryForLastID);     
+            }
+        }
+        else if(process.env.NODE_NO == "3" && await node_utils.pingNode(2)) {
+            console.log("2nd");
+            [lastID, fields] = await node2.query(queryForLastID);
+            [lastSelfID, fields2] = await node3.query(queryForLastID);
+        }
+        else if(process.env.NODE_NO == "2" && await node_utils.pingNode(3)) {
+            console.log("3rd");
+            [lastID, fields] = await node3.query(queryForLastID);
+            [lastSelfID, fields2] = await node2.query(queryForLastID);
+        }
+
+        console.log("lastID: ");
+        console.log(lastID[0].id);
+        console.log("lastSelfID")
+        console.log(lastSelfID[0].id);
+
+        if(lastID[0].id <= lastSelfID[0].id){
+            db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+        }
+        else if (lastID[0].id > lastSelfID[0].id){
+            lastSelfID = lastID[0].id + 1
+            console.log(lastSelfID);
+            query = `INSERT INTO movies (id, title, year, genre, director, actor) VALUES ('` + lastSelfID + `','` + req.body.title + `','` + req.body.year  + `','` +
+                req.body.genre + `', '` + req.body.director + `', '`  + req.body.actor + `')`;
+            db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+        }
+
         res.redirect('/');
     },
 
@@ -123,6 +163,20 @@ const controller = {
         const id = req.params.id;
         const result = await node_utils.pingNode(id);
         res.send(result);
+    },
+    
+    syncFragmentNode2: async function (req, res) {
+        sync.sync_fragment(node2, 2);
+        res.redirect('/');
+    },
+    syncFragmentNode3: async function (req, res) {
+        sync.sync_fragment(node3, 3);
+        res.redirect('/');
+    },
+
+    syncCentral: async function (req, res) {
+        sync.sync_central();
+        res.redirect('/');
     }
 }
 
