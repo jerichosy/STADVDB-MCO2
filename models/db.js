@@ -34,7 +34,7 @@ const db_queries = {
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             console.log(`Getting from Node 1 because nodenum = ${nodenum}`);
             const [movies, fields] = await node1
-                .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
+                .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY id DESC LIMIT 200`);
             return movies
         }
         // Otherwise, we use the year range to determine which node to query
@@ -45,14 +45,14 @@ const db_queries = {
                 console.log("Getting from Node 2");
                 if(await node_utils.pingNode(2)){
                     const [movies, fields] = await node2
-                    .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
+                    .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY id DESC LIMIT 200`);
                     return movies
                 }
                 else{
                     console.log("Getting from Node 1 because Node 2 is down");
                     if(await node_utils.pingNode(1)){
                         const [movies, fields] = await node1
-                        .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
+                        .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY id DESC LIMIT 200`);
                         return movies
                     }
                     else{
