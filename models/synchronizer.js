@@ -56,13 +56,13 @@ const sync_utils = {
                         case "UPDATE" : {
                             console.log("UPDATING HERE")
                             if (await node_utils.pingNode(frag_node_num)){
-                                const query = `UPDATE movies SET 
-                                    id='` + central_log[i].id + `', '` + 
-                                    `title='` + central_log[i].title + `', '` +
-                                    `year='` + central_log[i].year + `', '` +
-                                    `genre='` + central_log[i].genre + `', '` +
-                                    `director='` + central_log[i].director + `', '` +
-                                    `actor='` + central_log[i].actor + `', '`;
+                                const query = `UPDATE movies SET ` +
+                                `title='` + central_log[i].title + `',` +
+                                `year=` + central_log[i].year + `,` +
+                                `genre='` + central_log[i].genre + `',` +
+                                `director='` + central_log[i].director + `',` +
+                                `actor='` + central_log[i].actor + `' ` +
+                                `WHERE id=` + central_log[i].id;
 
                                 await transaction_utils.do_transaction(frag_node_num, query);
                                 console.log("UPDATED");
@@ -165,13 +165,14 @@ const sync_utils = {
                     case "UPDATE" : {
                         console.log("UPDATING HERE")
                         if (await node_utils.pingNode(1)){
-                            const query = `UPDATE movies SET 
-                                id='` + combined_log[i].id + `', '` + 
-                                `title='` + combined_log[i].title + `', '` +
-                                `year='` + combined_log[i].year + `', '` +
-                                `genre='` + combined_log[i].genre + `', '` +
-                                `director='` + combined_log[i].director + `', '` +
-                                `actor='` + combined_log[i].actor + `', '`;
+                            const query = `UPDATE movies SET ` +
+                                `title='` + combined_log[i].title + `',` +
+                                `year=` + combined_log[i].year + `,` +
+                                `genre='` + combined_log[i].genre + `',` +
+                                `director='` + combined_log[i].director + `',` +
+                                `actor='` + combined_log[i].actor + `' ` +
+                                `WHERE id=` + combined_log[i].id;
+
                             await transaction_utils.do_transaction(1, query);
                             console.log("UPDATED RECORD ON CENTRAL")
                         }
