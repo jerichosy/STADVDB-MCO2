@@ -235,6 +235,8 @@ const db_queries = {
             await transaction_utils.do_transaction(nodenum, query)
         }
         else {
+            console.log("node 1 not alive")
+            console.log(year);
             if (year < 1980 && await node_utils.pingNode(2)){
                 console.log(`Deleting from Node 2 because year = ${year}`)
                 await transaction_utils.do_transaction(2, query)

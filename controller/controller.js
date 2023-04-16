@@ -150,8 +150,10 @@ const controller = {
 
     getDeleteMovie: async function(req, res){
         const query = `DELETE FROM movies WHERE id = ` + req.query.id;
+        console.log("in edit movie")
+        console.log(req.query)
         
-        await db_queries.deleteQuery(query, req.body.year, process.env.NODE_NO)
+        await db_queries.deleteQuery(query, req.query.year, process.env.NODE_NO)
         await sync.sync_central();
         await sync.sync_fragment(node2, 2);
         await sync.sync_fragment(node3, 3);
