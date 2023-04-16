@@ -55,6 +55,18 @@ const sync_utils = {
                         }
                         case "UPDATE" : {
                             console.log("UPDATING HERE")
+                            if (await node_utils.pingNode(frag_node_num)){
+                                const query = `UPDATE movies SET 
+                                    id='` + central_log[i].id + `', '` + 
+                                    `title='` + central_log[i].title + `', '` +
+                                    `year='` + central_log[i].year + `', '` +
+                                    `genre='` + central_log[i].genre + `', '` +
+                                    `director='` + central_log[i].director + `', '` +
+                                    `actor='` + central_log[i].actor + `', '`;
+
+                                await transaction_utils.do_transaction(frag_node_num, query);
+                                console.log("UPDATED");
+                            }
                             break;
                         }
                     }
@@ -111,7 +123,8 @@ const sync_utils = {
                 node_02_log = await transaction_utils.do_transaction(2, node_02_records_query);
             }
             else if (maxCentral2 > maxFrag2){
-                this.sync_fragment(node2, 2)
+                // this.sync_fragment(node2, 2)
+                console.log("Node 2 needs to be synced");
             }
 
             if (maxCentral3 < maxFrag3) {
@@ -119,18 +132,11 @@ const sync_utils = {
                 node_03_log = await transaction_utils.do_transaction(3, node_03_records_query);
             }
             else if (maxCentral3 > maxFrag3){
-                this.sync_fragment(node3, 3)
+                // this.sync_fragment(node3, 3)
+                console.log("Node 3 needs to be synced");
             }
 
-            // console.log("node_02_log");
-            // console.log(node_02_log);
-            // console.log("node_03_log");
-            // console.log(node_03_log);
-
             combined_log = node_02_log.concat(node_03_log);
-
-            //console.log(combined_log);
-
             combined_log.sort((a, b) => a.action_time - b.action_time);
             
             for(i = 0; i < combined_log.length; i++){
@@ -143,21 +149,33 @@ const sync_utils = {
                             combined_log[i].genre + `', '` + combined_log[i].director + `', '`  + combined_log[i].actor + `')`;
 
                             await transaction_utils.do_transaction(1, query);
-                            console.log("INSERTED");
+                            console.log("INSERTED RECORD ON CENTRAL");
                         }
                         break;
                     }
                     case "DELETE" : {
                         console.log("DELETING HERE")
-                        // if(await node_utils.pingNode(1)){
-                        //     const query = `DELETE FROM movies WHERE id = ` + combined_log[i].id;
-                        //     await transaction_utils.do_transaction(1, query);
-                        //     console.log("DELETED")
-                        // }
+                        if(await node_utils.pingNode(1)){
+                            const query = `DELETE FROM movies WHERE id = ` + combined_log[i].id;
+                            await transaction_utils.do_transaction(1, query);
+                            console.log("DELETED RECORD ON CENTRAL")
+                        }
                         break;
                     }
                     case "UPDATE" : {
                         console.log("UPDATING HERE")
+                        if (await node_utils.pingNode(1)){
+                            const query = `UPDATE movies SET 
+                                id='` + combined_log[i].id + `', '` + 
+                                `title='` + combined_log[i].title + `', '` +
+                                `year='` + combined_log[i].year + `', '` +
+                                `genre='` + combined_log[i].genre + `', '` +
+                                `director='` + combined_log[i].director + `', '` +
+                                `actor='` + combined_log[i].actor + `', '`;
+                            await transaction_utils.do_transaction(1, query);
+                            console.log("UPDATED RECORD ON CENTRAL")
+                        }
+                        
                         break;
                     }
                 }
@@ -165,60 +183,7 @@ const sync_utils = {
             }
             
         }
-
-       
-
-
-        // if(await node_utils.pingNode(1)){
-        //     var query1 = (`SELECT * FROM log_table_02 ORDER BY action_time ASC`) 
-        //     var query2 = (`SELECT * FROM log_table_03 ORDER BY action_time ASC`) 
-        //     const [logs_table_0102, fields1] = transaction_utils.do_transaction(1,query1)
-        //     const [logs_table_0103, fields2] = transaction_utils.do_transaction(1,query2)
-        // }
-        // if(await node_utils.pingNode(2)){
-        //     var query3 = (`SELECT * FROM log_table ORDER BY action_time ASC`) 
-        //     const [logs_table_02, fields3] = transaction_utils.do_transaction(2,query3)
-        // }
-        // if(await node_utils.pingNode(3)){
-        //     var query4 = (`SELECT * FROM log_table ORDER BY action_time ASC`) 
-        //     const [logs_table_03, fields4] = transaction_utils.do_transaction(3,query4)
-        // }
-
-        // if(logs_table_0102.length() < logs_table_02.length() && logs_table_0102 != 0){
-
-        //     //node 1 < node 2. sync node 1
-        //     for(var i = logs_table_0102.length()+1; i <= logs_table_02.length(); i++){
-
-        //         if (await node_utils.pingNode(1)) {
-        //             switch (logs_table_0102[i].action) {
-        //                 // is it a string in the tables?
-        //                 case "insert" : {
-        //                     // is the id here from logs or auto increment?
-        //                     const query = `INSERT INTO movies (title, year, genre, director, actor) VALUES ('` + logs_table_0102[i].title + `','` + logs_table_0102[i].year  + `','` +
-        //                         logs_table_0102[i].genre + `', '` + logs_table_0102[i].director + `', '`  + logs_table_0102[i].actor + `')`;
-        //                 }
-        //                 case "delete" : {
-        //                     const query = `DELETE FROM movies WHERE id = ` + req.query.id;
-        //                 }
-        //                 case "update" :
-        //             }
-        //         }                    
-        //     }
-
-        // }
-        // else if(logs_table_0102.length() > logs_table_02.length()){
-        //     //node 1 > node 2. sync node 2
-        // }
-
-        // if(logs_table_0103.length() < logs_table_03.length()){
-        //     //node 1 < node 3. sync node 1
-        // }
-        // else if(logs_table_0103.length() > logs_table_03.length()){
-        //     //node 1 > node 3. sync node 3
-        // }        
     }
-
-
 }
 
 module.exports = sync_utils;
