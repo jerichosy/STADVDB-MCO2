@@ -41,36 +41,13 @@ const controller = {
 
     getEditMovie: async function(req, res){
         const query = `SELECT * FROM movies where id = ` + req.query.id;
-        const [movie, fields] = await node1.query(query);
+        const [movie, fields] = await node1.query(query);  //TODO: node 2 and node 3 
 
         res.render('edit', movie[0]) 
     },
-    
-    // postUpdateMovie: async function (req, res) {
-    //     // var id = req.get('referer');
-    //     // console.log(id);
-    //     // id = id.replace("http://" + process.env.THIS_HOST + ":" + process.env.THIS_PORT +"/editMovie?id=", ""); // change to current node's URI
-    //     // console.log(id);
-    //     let id = req.body.id;
-    //     console.log(id);
-    //     if(req.body.newyear === ""){
-    //         year = req.body.oldyear
-    //     }
-    //     else{
-    //         year = req.body.newyear
-    //     }
-            
-    //     const query = `UPDATE movies SET title = '` + req.body.title + `', year = ` + year + `, genre = '` + 
-    //                     req.body.genre + `', director = '` + req.body.director + `', actor = '` + req.body.actor + `' WHERE id = ` + id;
-    //     const [movie, fields] = await node1.query(query);
-    //     console.log(movie)
-    //     res.redirect('/');
-    // },
 
     postUpdateMovie: async function (req, res) {
-        // var id = req.get('referer');
-        // id = id.replace("http://localhost:3000" + "/editMovie?id=", ""); // change to current node's URI
-
+        console.log("-------------------------UPDATE----------------")
         let id = req.body.id;
         console.log(id)
 
@@ -85,13 +62,52 @@ const controller = {
             const query = `UPDATE movies SET title = '` + req.body.title + `', year = ` + year + `, genre = '` + 
                         req.body.genre + `', director = '` + req.body.director + `', actor = '` + req.body.actor + `' WHERE id = ` + id;
 
-            var movies = db_queries.updateQuery(query, req.body.oldyear, year, process.env.NODE_NO, req.body)
-            console.log(movies)
+            await db_queries.updateQuery(query, req.body.oldyear, year, process.env.NODE_NO, req.body)
+            await sync.sync_central();
+            await sync.sync_fragment(node2, 2);
+            await sync.sync_fragment(node3, 3);
         }
         else{
-            const query = `DELETE FROM movies WHERE id = ` + req.query.id;
-        
-            db_queries.deleteQuery(query, req.body.oldyear, process.env.NODE_NO)
+            const queryDel = `DELETE FROM movies WHERE id = ` + req.body.id;
+            const queryIns = `INSERT INTO movies (id, title, year, genre, director, actor) VALUES ('` + req.body.id + `','` + req.body.title + `','` + req.body.newyear  + `','` +
+            req.body.genre + `', '` + req.body.director + `', '`  + req.body.actor + `')`;
+            
+            if (process.env.NODE_NO == 1){
+                await db_queries.deleteQuery(queryDel, req.body.oldyear, 1)
+                await db_queries.insertQuery(queryIns, req.body.newyear, 1)
+            }
+            else {
+                // delete from current frag node
+                if (req.body.oldyear < 1980) {
+                    await db_queries.deleteQuery(queryDel, req.body.oldyear, 2);
+                }
+                else {
+                    await db_queries.deleteQuery(queryDel, req.body.oldyear, 3);
+                } 
+                console.log("SHOULD SYNC AFTER DELETE");
+                await sync.sync_central();
+                await sync.sync_fragment(node2, 2);
+                await sync.sync_fragment(node3, 3);
+                // ~sync_central
+                // insert to node 1, ~sync_frag(opp_frag_node)
+                    // if node 1 down, insert to opposite frag node, ~sync_central
+                if (await node_utils.pingNode(1)) {
+                    await db_queries.insertQuery(queryIns, req.body.newyear, 1)
+                    await sync.sync_central();
+                    await sync.sync_fragment(node2, 2);
+                    await sync.sync_fragment(node3, 3);
+                    console.log("SHOULD SYNC AFTER INSERT");
+                } 
+                else {
+                    if(req.body.newyear < 1980 && req.body.oldyear >= 1980) {
+                        await db_queries.insertQuery(queryIns, req.body.newyear, 2)
+                    }
+                    else {
+                        await db_queries.insertQuery(queryIns, req.body.newyear, 3)
+                    }
+                }
+            }
+               
         }
             
         
@@ -99,7 +115,6 @@ const controller = {
     },
 
     postAddMovie: async function (req, res) {
-        // INSERT INTO movies (title, year, genre, director, actor) VALUES ('The Matrix', 1999, 'Sci-Fi', 'Lana Wachowski', 'Keanu Reeves');
         let query = `INSERT INTO movies (title, year, genre, director, actor) VALUES ('` + req.body.title + `','` + req.body.year  + `','` +
                         req.body.genre + `', '` + req.body.director + `', '`  + req.body.actor + `')`;
         
@@ -134,14 +149,14 @@ const controller = {
         console.log(lastSelfID[0].id);
 
         if(lastID[0].id <= lastSelfID[0].id){
-            db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+            await db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
         }
         else if (lastID[0].id > lastSelfID[0].id){
             lastSelfID = lastID[0].id + 1
             console.log(lastSelfID);
             query = `INSERT INTO movies (id, title, year, genre, director, actor) VALUES ('` + lastSelfID + `','` + req.body.title + `','` + req.body.year  + `','` +
                 req.body.genre + `', '` + req.body.director + `', '`  + req.body.actor + `')`;
-            db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
+            await db_queries.insertQuery(query, req.body.year, process.env.NODE_NO)
         }
 
         res.redirect('/');
@@ -150,7 +165,7 @@ const controller = {
     getDeleteMovie: async function(req, res){
         const query = `DELETE FROM movies WHERE id = ` + req.query.id;
         
-        db_queries.deleteQuery(query, req.body.year, process.env.NODE_NO)
+        await db_queries.deleteQuery(query, req.body.year, process.env.NODE_NO)
         res.redirect('/');
     },
 
@@ -166,16 +181,16 @@ const controller = {
     },
     
     syncFragmentNode2: async function (req, res) {
-        sync.sync_fragment(node2, 2);
+        await sync.sync_fragment(node2, 2);
         res.redirect('/');
     },
     syncFragmentNode3: async function (req, res) {
-        sync.sync_fragment(node3, 3);
+        await sync.sync_fragment(node3, 3);
         res.redirect('/');
     },
 
     syncCentral: async function (req, res) {
-        sync.sync_central();
+        await sync.sync_central();
         res.redirect('/');
     }
 }

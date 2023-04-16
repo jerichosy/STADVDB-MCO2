@@ -6,7 +6,7 @@ const db_queries = {
     selectQuery: async function (addtlQuery, from, to, nodenum) {
         // If we're node 1, prefer Node 1 if alive
         if (nodenum == 1 && await node_utils.pingNode(1)) {
-            console.log("Getting from Node 1");
+            console.log(`Getting from Node 1 because nodenum = ${nodenum}`);
             const [movies, fields] = await node1
                 .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
             return movies
@@ -23,6 +23,7 @@ const db_queries = {
                     return movies
                 }
                 else{
+                    console.log("Getting from Node 1 because Node 2 is down");
                     if(await node_utils.pingNode(1)){
                         const [movies, fields] = await node1
                         .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`);
@@ -41,6 +42,7 @@ const db_queries = {
                     return movies
                 }
                 else {
+                    console.log("Getting from Node 1 because Node 3 is down");
                     if (await node_utils.pingNode(1)) {
                         const [movies, fields] = await node1
                             .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 200`); 
@@ -53,13 +55,14 @@ const db_queries = {
             }
             // Incase of a range that spans both nodes, we query Node 1 (if it's alive) or both Node 2 and Node 3 and concatenate the results
             else {
-                console.log("Getting from Node 1")
+                console.log(`Getting from Node 1 because year range (${from}-${to})`)
                 if (await node_utils.pingNode(1)) {
                     const [movies, fields] = await node1
                         .query(`SELECT * FROM movies ` + addtlQuery +  ` ORDER BY YEAR DESC LIMIT 200`); 
                         return movies
                 }
                 else {
+                    console.log("Getting from Node 2 and 3 because Node 1 is down and year range");
                     if(await node_utils.pingNode(2) && await node_utils.pingNode(3)) {
                         const [movies2, fields2] = await node2
                             .query(`SELECT * FROM movies ` + addtlQuery +  ` LIMIT 100`);
@@ -77,20 +80,26 @@ const db_queries = {
         }
     },
 
-    insertQuery: async function(query, year, nodenum) { //TODO: FIX IDS
+    insertQuery: async function(query, year, nodenum) {
                
         if (nodenum == 1 && await node_utils.pingNode(1)) {
+            console.log(`Inserting to Node 1 because nodenum = ${nodenum}`);
             await transaction_utils.do_transaction(nodenum, query)
         }
         else {
+            if (nodenum == 1) {
+                console.log("Inserting to Node 1 failed because Node 1 is down");
+            }
             if (year < 1980 && await node_utils.pingNode(2)){
-                
+                console.log(`Inserting to Node 2 because year = ${year}`);
                 await transaction_utils.do_transaction(2, query)
             }
             else if (year >= 1980 && await node_utils.pingNode(3)) {
+                console.log(`Inserting to Node 3 because year = ${year}`);
                 await transaction_utils.do_transaction(3, query)
             }
             else if (await node_utils.pingNode(1)){
+                console.log("Inserting to Node 1 because Node 2 or 3 is down");
                 await transaction_utils.do_transaction(1, query)
             }
             else {
@@ -99,49 +108,8 @@ const db_queries = {
         }
         
     },
-    // Node 2: 5
-    // Node 1: 1 2 3 4 5
-    // Node 3: 1 2 3 4 
 
     updateQuery: async function(query, oldyear, newyear, nodenum, body) {
-        //if node 1 is alive
-            // if new year > 1980 && old year < 1980
-                // delete transaction
-                // insert transaction
-            // else if new year < 1980 && old year > 1980
-                // delete transaction
-                // insert transaction
-            // else no change in year
-                // update node 1
-                // log to what node #
-        // else
-            // if new year > 1980 && old year < 1980
-                // delete transaction
-                // insert transaction
-                // log to node 1
-            // else if new year < 1980 && old year > 1980
-                // delete transaction
-                // insert transaction
-            // else no change in year
-                // update node 1
-                // log to what node #
-        
-        
-        // if (nodenum == 1 && await node_utils.pingNode(1)) {
-        //     await transaction_utils.do_transaction(nodenum, query)
-        // }
-        // else {
-        //     if (year < 1980 && await node_utils.pingNode(2)){
-        //         await transaction_utils.do_transaction(2, query)
-        //     }
-        //     else if (year >= 1980 && await node_utils.pingNode(3)) {
-        //         await transaction_utils.do_transaction(3, query)
-        //     }
-        //     else {
-        //         console.log("No nodes available. Please try again later.")
-        //     }
-        // }
-        
         //no changing of year
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             await transaction_utils.do_transaction(nodenum, query)
@@ -161,63 +129,50 @@ const db_queries = {
             }
         }
 
-        // if year changed 1979 1981
-        else if (oldyear < 1980 && newyear >= 1980){
-            // delete from node 2, add to node 3
-            if (await node_utils.pingNode(2) && await node_utils.pingNode(3)){
-                var delQ = `DELETE FROM movies WHERE id = ` + body.id;
-                this.deleteQuery(delQ, oldyear, 2)
-                
-                var insQ = `INSERT INTO movies (title, year, genre, director, actor) VALUES ('` + body.title + `','` + newyear  + `','` +
-                body.genre + `', '` + body.director + `', '`  + body.actor + `')`;
-                
-                this.insertQuery(insQ, newyear, 3);
+        //with year change but no node change, since no changes are handled in controller
+        else if (oldyear < 1980 && newyear < 1980){
+            // keep in node 2
+            if (await node_utils.pingNode(2)) {
+                await transaction_utils.do_transaction(2, query)
             }
-            else if(await node_utils.pingNode(1)){
+            else if (await node_utils.pingNode(1)){
                 await transaction_utils.do_transaction(1, query)
-
             }
             else{
                 console.log("No nodes available. Please try again later.")
             }
-            
-
-
-            
         }
-        else if (oldyear >= 1980 && newyear < 1980){
-            // delete from node 3, add to node 2
-        }
-        else if (oldyear < 1980 && newyear < 1980){
-            // keep in node 2
-            if (await node_utils.pingNode(2)) {
-
+        else if (oldyear >= 1980 && newyear >= 1980){
+            // keep in node 3
+            if (await node_utils.pingNode(3)) {
+                await transaction_utils.do_transaction(3, query)
             }
             else if (await node_utils.pingNode(1)){
-                
+                await transaction_utils.do_transaction(1, query)
+            }
+            else{
+                console.log("No nodes available. Please try again later.")
             }
         }
-        else if (oldyear >= 1980 && newyear >= 1980 && await node_utils.pingNode(3)){
-            // keep in node 3
-        }
-
-        
-
     },
 
     deleteQuery: async function(query, year, nodenum) {
         
         if (nodenum == 1 && await node_utils.pingNode(1)) {
+            console.log(`Deleting from Node 1 because nodenum = ${nodenum}`)
             await transaction_utils.do_transaction(nodenum, query)
         }
         else {
             if (year < 1980 && await node_utils.pingNode(2)){
+                console.log(`Deleting from Node 2 because year = ${year}`)
                 await transaction_utils.do_transaction(2, query)
             }
             else if (year >= 1980 && await node_utils.pingNode(3)) {
+                console.log(`Deleting from Node 3 because year = ${year}`)
                 await transaction_utils.do_transaction(3, query)
             }
             else if (await node_utils.pingNode(1)){
+                console.log("Deleting from Node 1 because Node 2 or 3 is down")
                 await transaction_utils.do_transaction(1, query)
             }
             else {
@@ -229,15 +184,3 @@ const db_queries = {
 }
 
 module.exports = db_queries
-
-
-
-
-/*
-    Insert
-    Node 1 is down
-    Im in 105 (Node 1 & Node 3)
-        Insert defaults to Node 3
-        Log that insert
-        Replicate (Sync)
-*/
