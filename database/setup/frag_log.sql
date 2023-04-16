@@ -60,6 +60,7 @@ INSERT INTO movies (title, `year`, genre, director, actor) VALUES ('Your Name', 
 SELECT * FROM movies WHERE title = 'Your Name';
 
 SELECT * FROM log_table;
+SELECT * FROM movies ORDER BY id DESC LIMIT 15;
 
 DELETE FROM movies WHERE id = 378609;
 

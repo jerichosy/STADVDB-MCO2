@@ -133,7 +133,6 @@ SELECT * FROM log_table_03 ORDER BY action_time ASC;
 SELECT * FROM log_table_02 ORDER BY action_time ASC;
 SELECT * FROM movies  ORDER BY id DESC LIMIT 15;
 
-SELECT * FROM movies  ORDER BY id DESC LIMIT 15;
 DELETE FROM movies WHERE id = 378621;
 DELETE FROM movies WHERE id >= 378613;
 
