@@ -12,6 +12,29 @@ const transaction_utils = {
             await connection.beginTransaction();
 
             var [result, fields] =  await connection.query(query);
+
+            await connection.commit();
+
+            console.log('success!');
+            return result
+        } catch (error) {
+            if (connection) {
+                await connection.rollback();
+            }
+            throw error;
+        } finally {
+            if (connection) {
+                await connection.release();
+            }
+        }
+    },
+    do_transaction_delay: async function (node, query) {
+        let connection;
+        try {
+            connection = await node_utils.getConnection(parseInt(node));
+            await connection.beginTransaction();
+
+            var [result, fields] =  await connection.query(query);
             
             await sleep(5000);
             
@@ -30,6 +53,7 @@ const transaction_utils = {
             }
         }
     }
+
 }
 
 module.exports = transaction_utils;
