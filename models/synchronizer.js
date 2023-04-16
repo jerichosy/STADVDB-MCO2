@@ -1,19 +1,14 @@
 const { node1, node2, node3, node_utils } = require('./nodes.js');
 const transaction_utils = require('./transaction.js');
 
+// TODO: If sync_fragment/central is called somewhere else other than the replicator, might wanna check if the node is already syncing. 
+// isSyncing = false;
+
 const sync_utils = {
 
-    //sync_central 1 <--2&3
-    //sync_fragment 2 <-- 1  OR 3 <-- 1
-
     sync_fragment: async function (frag_node, frag_node_num){
-        if (await node_utils.pingNode(1)) {
-            // get latest id from Node 1 and selected Node
-            // compare if same
-            // if not, get new log records from node 1
-                // else, no need to sync
-            // put each new data record in central_log 
-            
+        console.log("Syncing fragment " + frag_node_num)
+        if (await node_utils.pingNode(1)) {          
 
             var query1 = (`SELECT MAX(log_id) as log_id_max FROM log_table_0`+ frag_node_num); 
             var query2 = (`SELECT MAX(log_id) as log_id_max FROM log_table`);
@@ -79,13 +74,11 @@ const sync_utils = {
             }
             
         }
-        else {
-
-        } 
         
     },
 
     sync_central: async function(){
+        console.log("Syncing central");
         let node_02_log = [];
         let node_03_log = [];
         let combined_log = [];
@@ -140,6 +133,8 @@ const sync_utils = {
             combined_log.sort((a, b) => b.action_time - a.action_time);
             
             for(i = 0; i < combined_log.length; i++){
+
+                console.log(combined_log[i]);
                 var query = "";
                 switch (combined_log[i].action) {
                     case "INSERT" : {
