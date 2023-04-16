@@ -46,7 +46,7 @@ const controller = {
             const query = `UPDATE movies SET title = '` + req.body.title + `', year = ` + year + `, genre = '` + 
                         req.body.genre + `', director = '` + req.body.director + `', actor = '` + req.body.actor + `' WHERE id = ` + id;
 
-            await db_queries.updateQuery(query, req.body.oldyear, year, process.env.NODE_NO, req.body)
+            await db_queries.updateQuery_delay(query, req.body.oldyear, year, process.env.NODE_NO, req.body)
             await sync.sync_central();
             await sync.sync_fragment(node2, 2);
             await sync.sync_fragment(node3, 3);
