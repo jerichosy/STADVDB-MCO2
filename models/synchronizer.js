@@ -137,7 +137,7 @@ const sync_utils = {
             }
 
             combined_log = node_02_log.concat(node_03_log);
-            combined_log.sort((a, b) => a.action_time - b.action_time);
+            combined_log.sort((a, b) => b.action_time - a.action_time);
             
             for(i = 0; i < combined_log.length; i++){
                 var query = "";
