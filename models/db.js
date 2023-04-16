@@ -2,10 +2,8 @@ const {node1, node2, node3, node_utils} = require('./nodes.js');
 const transaction_utils = require('./transaction.js');
 
 const db_queries = {
+    // this is okay na
     selectQuery: async function (addtlQuery, from, to, nodenum) {
-        console.log(from)
-        console.log(to)
-
         // If we're node 1, prefer Node 1 if alive
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             console.log("Getting from Node 1");
@@ -79,13 +77,14 @@ const db_queries = {
         }
     },
 
-    insertQuery: async function(query, year, nodenum) {
+    insertQuery: async function(query, year, nodenum) { //TODO: FIX IDS
                
         if (nodenum == 1 && await node_utils.pingNode(1)) {
             await transaction_utils.do_transaction(nodenum, query)
         }
         else {
             if (year < 1980 && await node_utils.pingNode(2)){
+                
                 await transaction_utils.do_transaction(2, query)
             }
             else if (year >= 1980 && await node_utils.pingNode(3)) {
@@ -100,6 +99,9 @@ const db_queries = {
         }
         
     },
+    // Node 2: 5
+    // Node 1: 1 2 3 4 5
+    // Node 3: 1 2 3 4 
 
     updateQuery: async function(query, oldyear, newyear, nodenum, body) {
         //if node 1 is alive

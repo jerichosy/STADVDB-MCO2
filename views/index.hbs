@@ -24,11 +24,14 @@
 
 
     --}}
+    <a href="/syncfragment2"><button>Sync Fragment 2</button></a>
+    <a href="/syncfragment3"><button>Sync Fragment 3</button></a>
+    <a href="/synccentral"><button>Sync Central</button></a>
     <div class="add-movie-section">
         <h2>Add Movie</h2>
         <form method="post" action="/add">
-            <input name="title" type="text" placeholder="Title" required>
-            <input name="year" type="number" placeholder="Year" required>
+            <input name="title" type="text" placeholder="Title" required value="Movie 11">
+            <input name="year" type="number" placeholder="Year" required value="1979">
             <select name="genre" title="Genre" required>
                 <option value="Action">Action</option>
                 <option value="Adventure">Adventure</option>
@@ -37,7 +40,7 @@
                 <option value="Crime">Crime</option>
                 <option value="Documentary">Documentary</option>
                 <option value="Drama">Drama</option>
-                <option value="Family">Family</option>
+                <option value="Family" selected>Family</option>
                 <option value="Fantasy">Fantasy</option>
                 <option value="Film-Noir">Film-Noir</option>
                 <option value="Horror">Horror</option>
@@ -51,8 +54,8 @@
                 <option value="War">War</option>
                 <option value="Western">Western</option>
             </select>
-            <input name="director" type="text" placeholder="Director" required>
-            <input name="actor" type="text" placeholder="Actor" required>
+            <input name="director" type="text" placeholder="Director" required value="uvuvwevwevwe">
+            <input name="actor" type="text" placeholder="Actor" required value="onyetenyevwe">
             <input type="submit">
     </form>
     </div>

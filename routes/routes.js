@@ -10,6 +10,9 @@ app.get('/editMovie?:id', controller.getEditMovie);
 app.get('/deleteMovie?:id', controller.getDeleteMovie);
 app.get('/test_query', controller.testQuery);
 app.get(`/ping_node/:id`, controller.pingNode);
+app.get('/syncfragment3', controller.syncFragmentNode3);
+app.get('/syncfragment2', controller.syncFragmentNode2);
+app.get('/synccentral', controller.syncCentral);
 
 app.post('/update', controller.postUpdateMovie);
 app.post('/add', controller.postAddMovie);

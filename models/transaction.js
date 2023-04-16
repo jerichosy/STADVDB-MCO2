@@ -10,7 +10,8 @@ const transaction_utils = {
             // console.log(connection)
             await connection.beginTransaction();
 
-            await connection.query(query);
+            var [result, fields] =  await connection.query(query);
+            
             
             // const log = 'Post ' + insertPostResult.insertId + ' added';
             // await connection.query('INSERT INTO log SET data=?', log);
@@ -18,6 +19,7 @@ const transaction_utils = {
             await connection.commit();
 
             console.log('success!');
+            return result
         } catch (error) {
             if (connection) {
                 await connection.rollback();
@@ -28,24 +30,7 @@ const transaction_utils = {
                 await connection.release();
             }
         }
-    
-        // if (connection) {
-        //     try {
-        //         connection.beginTransaction();
-        //         // QUERY HERE
-        //         // LOG HERE
-        //         connection.commit();
-        //         connection.release();
-        //     }
-        //     catch (err) {
-        //         connection.rollback();
-        //         connection.release();
-        //         throw err;
-        //     }
-        // }
-        // else {
-        //     console.log("Connection Error!")
-        // }
+
 
         // general idea
         // connect to node

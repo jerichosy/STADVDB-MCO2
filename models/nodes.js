@@ -69,7 +69,6 @@ const node_utils = {
     },
 
     getConnection: async function(n) {
-        console.log(n, typeof(n))
         switch (n) {
             case 1: return await node1.getConnection();
             case 2: return await node2.getConnection();
