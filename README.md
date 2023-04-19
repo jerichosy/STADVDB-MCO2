@@ -1,6 +1,6 @@
 # STADVDB-MCO2
 
-<img width="1064" alt="image" src="https://user-images.githubusercontent.com/69558553/233154192-3f0b4aa7-4ed5-467e-99eb-8cbb877c1eeb.png">
+![233154192-3f0b4aa7-4ed5-467e-99eb-8cbb877c1eeb](https://user-images.githubusercontent.com/69558553/233155001-63baf4bd-6365-4ddd-b658-31d87d1d0b15.jpeg)
 
 <br>
 
